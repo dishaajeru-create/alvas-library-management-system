@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Member
+from .models import Member, Book, Issue
 import random
 def home(request):
     return render(request, 'library/home.html')
@@ -29,3 +29,28 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'library/register.html', {'form': form})
+def issue_book(request):
+    books = Book.objects.filter(available_copies__gt=0)
+    members = Member.objects.filter(is_active_member=True)
+    if request.method == 'POST':
+        book = Book.objects.get(id=request.POST['book_id'])
+        member = Member.objects.get(id=request.POST['member_id'])
+        Issue.objects.create(book=book, member=member)
+        book.available_copies -= 1
+        book.save()
+        messages.success(request, f'"{book.title}" issued to {member.member_id}')
+        return redirect('issue_book')
+    return render(request, 'library/issue_book.html', {'books': books, 'members': members})
+def return_book(request):
+    active_issues = Issue.objects.filter(is_returned=False)
+    if request.method == 'POST':
+        issue = Issue.objects.get(id=request.POST['issue_id'])
+        issue.return_date = timezone.now()
+        issue.is_returned = True
+        issue.fine_amount = issue.calculate_fine()
+        issue.save()
+        issue.book.available_copies += 1
+        issue.book.save()
+        messages.success(request, f'"{issue.book.title}" returned. Fine: ₹{issue.fine_amount}')
+        return redirect('return_book')
+    return render(request, 'library/return_book.html', {'active_issues': active_issues})

@@ -16,6 +16,8 @@
                 <a href="{% url 'register' %}">Register</a>
             {% endif %}
             {% if user.is_staff %}
+                | <a href="{% url 'issue_book' %}">Issue Book</a>
+                | <a href="{% url 'return_book' %}">Return Book</a>
                 | <a href="/admin/">Admin</a>
             {% endif %}
         </nav>

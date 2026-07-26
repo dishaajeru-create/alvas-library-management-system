@@ -1,0 +1,23 @@
+{% extends 'library/base.html' %}
+{% block title %}Issue Book{% endblock %}
+{% block content %}
+<h2>Issue a Book</h2>
+<form method="post">
+    {% csrf_token %}
+    <label>Select Book:</label>
+    <select name="book_id" required>
+        {% for book in books %}
+        <option value="{{ book.id }}">{{ book.title }} ({{ book.available_copies }} available)</option>
+        {% endfor %}
+    </select>
+    <br><br>
+    <label>Select Member:</label>
+    <select name="member_id" required>
+        {% for member in members %}
+        <option value="{{ member.id }}">{{ member.member_id }} - {{ member.user.username }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+    <button type="submit">Issue Book</button>
+</form>
+{% endblock %}

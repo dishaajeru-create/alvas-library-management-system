@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Alvas Library{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Alvas Institute of Engineering and Technology - Library</h1>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/admin/">Admin</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -13,3 +14,20 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.author}"
+
+
+class Member(models.Model):
+    MEMBERSHIP_TYPES = [
+        ('student', 'Student'),
+        ('faculty', 'Faculty'),
+        ('staff', 'Staff'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    member_id = models.CharField(max_length=20, unique=True)
+    phone = models.CharField(max_length=15, blank=True)
+    membership_type = models.CharField(max_length=10, choices=MEMBERSHIP_TYPES, default='student')
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_active_member = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.member_id} - {self.user.get_full_name() or self.user.username}"

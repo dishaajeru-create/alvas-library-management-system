@@ -5,7 +5,20 @@ from django.contrib import messages
 from .models import Member, Book, Issue
 import random
 def home(request):
-    return render(request, 'library/home.html')
+    query = request.GET.get('q', '')
+    category = request.GET.get('category', '')
+    books = Book.objects.all()
+    if query:
+        books = books.filter(title__icontains=query) | books.filter(author__icontains=query)
+    if category:
+        books = books.filter(category__iexact=category)
+    categories = Book.objects.values_list('category', flat=True).distinct()
+    return render(request, 'library/home.html', {
+        'books': books,
+        'categories': categories,
+        'query': query,
+        'selected_category': category,
+    })
 
 def register(request):
     if request.method == 'POST':

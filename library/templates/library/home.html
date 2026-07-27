@@ -2,5 +2,36 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <h2>Welcome to the Library System</h2>
-<p>This is the home page — we'll add book search, useful links, and more here soon.</p>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Search by title or author" value="{{ query }}">
+    <select name="category">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Title</th><th>Author</th><th>Category</th><th>Location</th><th>Availability</th>
+    </tr>
+    {% for book in books %}
+    <tr>
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.category }}</td>
+        <td>{{ book.location }}</td>
+        <td>
+            {% if book.available_copies > 0 %}
+                Available ({{ book.available_copies }})
+            {% else %}
+                Not Available
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
